@@ -1,3 +1,10 @@
+/*
+    TO-DOs: 
+    1) Implementation of arrays sorting algorith
+    2) Proper memory management
+    3) Displaying Tree in proper format
+*/
+
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -20,33 +27,31 @@ private:
 public:
     Array() : n(0) {}
 
-    void display() const override {
-        if (!n) {
-            cout << "\n Array is Empty....\n\n";
-            return;
-        }
-
-        cout << "\n Current Array is : \n";
-        cout << "\n\n\t--------------------------------------------------------------";
-        cout << "\n\n\t  ";
-
-        for (int i = 0; i < n - 1; i++) {
-            cout << "［" << a[i] << "］--";
-        }
-
-        cout << "［" << a[n - 1] << "］";
-
-        cout << "\n\n\t--------------------------------------------------------------";
-        cout << "\n\n\n\n";
-
-        cout << " Size of Array: " << n << "\n\n";
+    // function to display an array (print array method)
+void display() const override {
+    if (n == 0) {
+        cout << "\n Array is Empty....\n\n";
+        return;
     }
+
+    cout << "\n Current Array is : \n";
+    cout << "\n\t[ ";
+
+    for (int i = 0; i < n - 1; i++) {
+        cout << a[i] << ", ";
+    }
+
+    cout << a[n - 1] << " ]\n\n";
+
+    cout << " Size of Array: " << n << "\n\n";
+}
+
 
     void performOperations() override {
         int choice;
         do {
             cout << "\n\n Array Operations ::\n";
-            cout << " 1 : Create Array\n 2 : Display\n 3 : Insert\n 4 : Delete\n 5 : Back to Main Menu\n";
+            cout << " 1 : Create Array\n 2 : Display\n 3 : Insert\n 4 : Delete Element\n 5 : Sorting Options\n 6 : Back to Main Menu\n";
             cout << "\n Enter your choice : ";
             cin >> choice;
 
@@ -63,7 +68,83 @@ public:
                 case 4:
                     deleteElement();
                     break;
+                case 5:  //all sorting related stuff
+                    sortOperation();
+                    break;
+                case 6:
+                    break;
+                default:
+                    cout << "Invalid Choice\n";
+            }
+        } while (choice != 6);
+    }
+
+
+private:
+    //for quick sort
+    int partition(int A[], int low, int high) {
+    int pivot = A[low];
+    int i = low + 1;
+    int j = high;
+    int temp;
+
+    do
+    {
+        //searching element greateer than pivot
+        while (A[i] <= pivot)
+        {
+            i++;
+        }
+
+        //searching element lesser than pivot
+        while (A[j] > pivot)
+        {
+            j--;
+        }
+
+        // swaping A[i] with A[j]
+        if (i < j)
+        {
+            temp = A[i];
+            A[i] = A[j];
+            A[j] = temp;
+        }
+    } while (i < j);
+
+    // Swap A[low] and A[j]
+    temp = A[low];
+    A[low] = A[j];
+    A[j] = temp;
+    return j;  
+}
+
+    // all array sorting related opeerations
+    void sortOperation() {
+        int choice;
+        do {
+            cout << "\n\n Sorting Algorithms ::\n";
+            cout << " 1 : Bubble Sort\n 2 : Merge Sort \n 3 : Quick Sort\n 4 : Selection Sort\n 5 : Count Sort\n 5 : Back to Main Menu\n";
+            cout << "\n Enter your choice : ";
+            cin >> choice;
+
+            switch (choice) {
+                case 1:
+                    bubbleSort();
+                    break;
+                case 2:
+                    mergeSort();
+                    break;
+                case 3:
+                    quickSort(a, 0 , n-1);
+                    display();
+                    break;
+                case 4:
+                    selectionSort();
+                    break;
                 case 5:
+                    countSort();
+                    break;
+                case 6: //goes back to main menu
                     break;
                 default:
                     cout << "Invalid Choice\n";
@@ -71,7 +152,59 @@ public:
         } while (choice != 5);
     }
 
-private:
+        /* 
+            sorting algorithms 
+        */
+    void bubbleSort() {
+
+        int temp;
+        int isSorted=0;
+        clock_t tStart = clock();
+        for(int i=0;i<n-1;i++){
+            isSorted=1;
+            for(int j=0;j<n-i-1;j++){
+                if(a[j]>a[j+1]){
+                    temp= a[j];
+                    a[j] = a[j+1];
+                    a[j+1]= temp;
+                    isSorted=0;
+                }
+        }
+        if(isSorted){
+            break;
+        }
+
+        display();
+        cout << " Time taken for Bubble sort : " << static_cast<double>(clock() - tStart) / CLOCKS_PER_SEC << "s\n";
+
+    }
+    }
+    void mergeSort() {
+        // will implement
+    }
+    
+    void quickSort(int A[],  int low ,int high) {
+        int partitionIndex; // Index of pivot after partition
+        clock_t tStart = clock();
+
+    if (low < high)
+    {
+        partitionIndex = partition(a, low, high);
+        quickSort(a, low, partitionIndex - 1);  // sort left subarray 
+        quickSort(a, partitionIndex + 1, high); // sort right subarray
+    }
+
+    cout << " Time taken for Quick sort : " << static_cast<double>(clock() - tStart) / CLOCKS_PER_SEC << "s\n";
+
+    }
+    void selectionSort() {
+
+    }
+    void countSort() {
+
+    }
+
+
     void createArray() {
         cout << "\n Enter the number of elements in array : ";
         cin >> n;
@@ -155,6 +288,7 @@ private:
 
         display();
     }
+
 };
 
 // Node class for Linked List
@@ -759,7 +893,7 @@ int main() {
             case 1:
                 dataStructure = new Array();
                 dataStructure->performOperations();
-                delete dataStructure;
+                delete dataStructure;  //proper memory management
                 break;
             case 2:
                 dataStructure = new LinkedList();
