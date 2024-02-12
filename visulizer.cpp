@@ -1,4 +1,6 @@
 /*
+    (yeslai ek din majaley basharw garxu)
+    (banauna chai babal nai banauxuu)
     TO-DOs: 
     1) Implementation of arrays sorting algorith
     2) Proper memory management
