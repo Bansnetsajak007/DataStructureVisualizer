@@ -1,3 +1,6 @@
+//just write fucking codeeeeeee
+//  master java only java not script only java
+
 
 #include <iostream>
 

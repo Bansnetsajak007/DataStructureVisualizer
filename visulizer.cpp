@@ -1,6 +1,7 @@
 /*
     (yeslai ek din majaley basharw garxu)
-    (banauna chai babal nai banauxuu)
+    (banauna chai babal nai banauxuu
+    )
     TO-DOs: 
     1) Implementation of arrays sorting algorith
     2) Proper memory management
@@ -17,6 +18,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <vector>
+#include <iomanip>
 
 using namespace std;
 
@@ -33,20 +35,35 @@ public:
 
 using namespace std;
 
-class DataStructure {
-public:
-    virtual void performOperations() = 0;
-    virtual void display() const = 0;
-};
 
 class Array : public DataStructure {
 private:
     vector<int> a;
+    public:
+    
+    template<typename ForwardIterator>
+ForwardIterator max_element(ForwardIterator first, ForwardIterator last) {
+    if (first == last) {
+        // If the range is empty, return last
+        return last;
+    }
 
-public:
-    Array() {}
+    ForwardIterator max_it = first;
+    ++first;
 
-    void display() const override {
+    // Iterate through the range to find the maximum element
+    while (first != last) {
+        if (*first > *max_it) {
+            // If the current element is greater than the current max, update max_it
+            max_it = first;
+        }
+        ++first;
+    }
+
+    return max_it;
+}
+
+    void display() const {
         if (a.empty()) {
             cout << "\n Array is Empty....\n\n";
             return;
@@ -64,7 +81,7 @@ public:
         cout << " Size of Array: " << a.size() << "\n\n";
     }
 
-    void performOperations() override {
+    void performOperations() {
         int choice;
         do {
             cout << "\n\n Array Operations ::\n";
@@ -86,7 +103,7 @@ public:
                     deleteElement();
                     break;
                 case 5:
-                    sortOperation();
+                    selectionSort();
                     break;
                 case 6:
                     break;
@@ -147,135 +164,6 @@ private:
         display();
     }
 
-    void sortOperation() {
-        int choice;
-        do {
-            cout << "\n\n Sorting Algorithms ::\n";
-            cout << " 1 : Bubble Sort\n 2 : Merge Sort \n 3 : Quick Sort\n 4 : Selection Sort\n 5 : Count Sort\n 6 : Back to Main Menu\n";
-            cout << "\n Enter your choice : ";
-            cin >> choice;
-
-            switch (choice) {
-                case 1:
-                    bubbleSort();
-                    break;
-                case 2:
-                    mergeSort(0, a.size() - 1);
-                    display();
-                    break;
-                case 3:
-                    quickSort(0 , a.size() - 1);
-                    display();
-                    break;
-                case 4:
-                    selectionSort();
-                    break;
-                case 5:
-                    countSort();
-                    break;
-                case 6:
-                    break;
-                default:
-                    cout << "Invalid Choice\n";
-            }
-        } while (choice != 6);
-    }
-
-    void bubbleSort() {
-        clock_t tStart = clock();
-        int temp;
-        int isSorted = 0;
-        for(size_t i = 0; i < a.size() - 1; i++) {
-            isSorted = 1;
-            for(size_t j = 0; j < a.size() - i - 1; j++) {
-                if(a[j] > a[j + 1]) {
-                    temp = a[j];
-                    a[j] = a[j + 1];
-                    a[j + 1] = temp;
-                    isSorted = 0;
-                }
-            }
-            if(isSorted) {
-                break;
-            }
-        }
-        cout << " Time taken for Bubble sort : " << static_cast<double>(clock() - tStart) / CLOCKS_PER_SEC << "s\n";
-    }
-
-    void merge(size_t l, size_t m, size_t r) {
-        vector<int> L(a.begin() + l, a.begin() + m + 1);
-        vector<int> R(a.begin() + m + 1, a.begin() + r + 1);
-
-        size_t i = 0, j = 0, k = l;
-        while (i < L.size() && j < R.size()) {
-            if (L[i] <= R[j]) {
-                a[k] = L[i];
-                i++;
-            } else {
-                a[k] = R[j];
-                j++;
-            }
-            k++;
-        }
-
-        while (i < L.size()) {
-            a[k] = L[i];
-            i++;
-            k++;
-        }
-
-        while (j < R.size()) {
-            a[k] = R[j];
-            j++;
-            k++;
-        }
-    }
-
-    void mergeSort(size_t l, size_t r) {
-        if (l < r) {
-            size_t m = l + (r - l) / 2;
-            mergeSort(l, m);
-            mergeSort(m + 1, r);
-            merge(l, m, r);
-        }
-    }
-
-    size_t partition(int low, int high) {
-        int pivot = a[low];
-        int i = low + 1;
-        int j = high;
-        int temp;
-
-        do {
-            while (a[i] <= pivot && i <= j) {
-                i++;
-            }
-
-            while (a[j] > pivot && i <= j) {
-                j--;
-            }
-
-            if (i < j) {
-                temp = a[i];
-                a[i] = a[j];
-                a[j] = temp;
-            }
-        } while (i <= j);
-
-        temp = a[low];
-        a[low] = a[j];
-        a[j] = temp;
-        return j;  
-    }
-
-    void quickSort(int low, int high) {
-        if (low < high) {
-            size_t partitionIndex = partition(low, high);
-            quickSort(low, partitionIndex - 1);
-            quickSort(partitionIndex + 1, high);
-        }
-    }
-
     void selectionSort() {
         clock_t tStart = clock();
 
@@ -291,30 +179,8 @@ private:
 
         cout << " Time taken for Selection sort : " << static_cast<double>(clock() - tStart) / CLOCKS_PER_SEC << "s\n";
     }
-
-    void countSort() {
-        clock_t tStart = clock();
-        vector<int> output(a.size());
-        vector<int> count(*max_element(a.begin(), a.end()) + 1, 0);
-
-        for (int i : a) {
-            count[i]++;
-        }
-
-        for (size_t i = 1; i < count.size(); i++) {
-            count[i] += count[i - 1];
-        }
-
-        for (int i = a.size() - 1; i >= 0; i--) {
-            output[count[a[i]] - 1] = a[i];
-            count[a[i]]--;
-        }
-
-        a = output;
-
-        cout << " Time taken for Count sort : " << static_cast<double>(clock() - tStart) / CLOCKS_PER_SEC << "s\n";
-    }
 };
+
 
 
 // Node class for Linked List
@@ -511,7 +377,7 @@ public:
             cout << "［" << s[i] << "］|\n\t|  ";
         }
 
-        cout << "［" << s[0] << "］|";
+        cout << "(" << s[0] << ")|";
         cout << "\n\t-------------------------";
         cout << "\n\n\n\n";
     }
@@ -728,6 +594,19 @@ private:
 public:
     BinarySearchTree() : root(nullptr) {}
 
+    void printTree(TreeNode* root , int indent = 0) {
+        if(root != nullptr)  {
+            if(root->right) printTree(root->right, indent + 4);
+            if(indent) cout << setw(indent) << ' ';
+            if (root->right) cout << " /\n" << setw(indent) << ' ';
+            cout << root->data << "\n ";
+            if (root->left) {
+                cout << setw(indent) << ' ' << " \\\n";
+                printTree(root->left, indent + 4);
+        }
+        }
+    }
+
     void display() const override {
         if (!root) {
             cout << "\n Binary Search Tree is Empty....\n\n";
@@ -763,7 +642,7 @@ public:
                     searchNode();
                     break;
                 case 4:
-                    display();
+                    printTree(root);
                     break;
                 case 5:
                     break;
@@ -777,7 +656,7 @@ private:
     void inOrderTraversal(TreeNode* node) const {
         if (node) {
             inOrderTraversal(node->left);
-            cout << "［" << node->data << "］--";
+            cout << "(" << node->data << ")--";
             inOrderTraversal(node->right);
         }
     }
