@@ -3,9 +3,9 @@
     (banauna chai babal nai banauxuu
     )
     TO-DOs: 
-    1) Implementation of arrays sorting algorith
+    1) Implementation of arrays sorting algorith  ✅
     2) Proper memory management
-    3) Displaying Tree in proper format
+    3) Displaying Tree in proper format ✅
 
     sorting algorithms should not make change on original array
     time of every algorithm should be calculated effectively 
